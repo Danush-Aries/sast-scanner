@@ -1,0 +1,13 @@
+rules:
+  - id: sql-injection
+    patterns:
+      - pattern-either:
+          - pattern: "$CUR.execute(f\"...\")"
+          - pattern: "$CUR.execute(\"...\" % ...)"
+          - pattern: "$CUR.execute(\"...\".format(...))"
+          - pattern: "$CUR.execute($S)"
+      - pattern-not: "$CUR.execute(\"...\")"
+      - pattern-not: "$CUR.execute(\"...\", $S)"
+    message: "SQL injection detected: dynamic string formatting used in execute(). Use parameterized queries instead (e.g., execute(\"SELECT * FROM users WHERE id = %s\", (user_id,)))."
+    severity: ERROR
+    languages: [python]

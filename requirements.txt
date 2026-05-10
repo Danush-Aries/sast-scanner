@@ -1,0 +1,8 @@
+anthropic
+semgrep
+rich
+sarif-om
+fastapi
+uvicorn
+pydantic
+python-dotenv
