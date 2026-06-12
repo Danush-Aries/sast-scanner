@@ -26,7 +26,7 @@ interface Finding {
   id: string;
   message: string;
   file: string;
-  line: int;
+  line: number;
   snippet: string;
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   ai_explanation: {
@@ -56,7 +56,7 @@ const App: React.FC = () => {
   const runScan = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/scan', {
+      const response = await fetch('/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ target_path: targetPath }),
