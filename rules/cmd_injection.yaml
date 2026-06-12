@@ -8,10 +8,12 @@ rules:
           - pattern: "subprocess.call($S, shell=True, ...)"
           - pattern: "subprocess.run($S, shell=True, ...)"
           - pattern: "subprocess.check_output($S, shell=True, ...)"
-      - pattern-not: "os.system($S)" # Placeholder for constant string check if needed, but Semgrep handles literals better via metavariables
       - metavariable-regex:
           metavariable: $S
-          regex: '.*(f"".*|"".* \+ .*|%.*).*'
-    message: "Command injection detected: shell=True or shell commands are used with dynamic input. Use a list of arguments with shell=False."
+          regex: '.*(f""".*|f".*|f''.*|\.format\(.*|\s*\+\s*|%\s*\().*'
+    message: >
+      Command injection risk: shell=True or shell commands are used with a
+      dynamically-constructed argument. Pass a list of arguments with
+      shell=False instead of building a shell string.
     severity: ERROR
     languages: [python]

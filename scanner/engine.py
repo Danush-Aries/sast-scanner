@@ -72,9 +72,16 @@ class ScanEngine:
                     except Exception as e:
                         print(f"Error analyzing {file_path}: {e}")
 
-        # Augment findings with AI explanations
+        # Augment findings with AI explanations (only when AI explainer is enabled)
         for finding in findings:
-            ai_data = self.ai_explainer.explain_finding(finding)
+            if self.ai_explainer is not None:
+                ai_data = self.ai_explainer.explain_finding(finding)
+            else:
+                ai_data = {
+                    "explanation": "AI explanations disabled (DISABLE_AI_EXPLAINER=true).",
+                    "remediation": "Consult the OWASP guidelines for remediation advice.",
+                    "risk_level": "Unknown",
+                }
             finding["ai_explanation"] = ai_data
 
         return findings
