@@ -43,6 +43,15 @@ class ASTAnalyzer:
             return True
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Mod):  # "..." % var
             return True
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):  # "..." + var
+            # Flag only when at least one operand is user-influenced
+            # (a variable or call), not "a" + "b" of two literals.
+            return (
+                self._is_dynamic_string(node.left)
+                or self._is_dynamic_string(node.right)
+                or isinstance(node.left, (ast.Name, ast.Call))
+                or isinstance(node.right, (ast.Name, ast.Call))
+            )
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Attribute) and node.func.attr == 'format':
                 return True

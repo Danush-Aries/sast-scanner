@@ -2,18 +2,22 @@ import os
 import subprocess
 import json
 from typing import List, Dict, Any
-from .ai_explainer import AIExplainer
 from .ast_analyzer import ASTAnalyzer
 from .secret_detector import SecretDetector
 
 class ScanEngine:
-    def __init__(self, rules_dir: str, ai_explainer: AIExplainer = None):
+    def __init__(self, rules_dir: str, ai_explainer=None):
         self.rules_dir = rules_dir
-        # Disable AI explainer if environment variable is set
+        # Disable the AI explainer if the environment variable is set.
+        # The import is lazy so the scanner runs offline without the
+        # `anthropic` package installed.
         if os.getenv("DISABLE_AI_EXPLAINER") == "true":
             self.ai_explainer = None
+        elif ai_explainer is not None:
+            self.ai_explainer = ai_explainer
         else:
-            self.ai_explainer = ai_explainer or AIExplainer()
+            from .ai_explainer import AIExplainer
+            self.ai_explainer = AIExplainer()
         self.ast_analyzer = ASTAnalyzer()
         self.secret_detector = SecretDetector()
 
@@ -49,28 +53,36 @@ class ScanEngine:
             print(f"Error running semgrep: {e}")
             return []
 
+    @staticmethod
+    def _iter_python_files(target_path: str):
+        """Yield Python files for a target that may be a single file or a directory.
+
+        os.walk yields nothing for a file path, so without this a single-file
+        target would silently skip AST and secret detection (semgrep only).
+        """
+        if os.path.isfile(target_path):
+            if target_path.endswith(".py"):
+                yield target_path
+            return
+        for root, _, files in os.walk(target_path):
+            for file in files:
+                if file.endswith(".py"):
+                    yield os.path.join(root, file)
+
     def scan(self, target_path: str) -> List[Dict[str, Any]]:
         # 1. Semgrep findings
         findings = self.run_semgrep(target_path)
 
-        # 2. AST-based findings for Python files
-        for root, _, files in os.walk(target_path):
-            for file in files:
-                if file.endswith(".py"):
-                    file_path = os.path.join(root, file)
-                    try:
-                        with open(file_path, "r", encoding="utf-8") as f:
-                            content = f.read()
+        # 2. AST + secret findings for Python files (single file or directory).
+        for file_path in self._iter_python_files(target_path):
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
 
-                        # AST Analysis
-                        ast_findings = self.ast_analyzer.analyze_file(file_path, content)
-                        findings.extend(ast_findings)
-
-                        # Secret Detection
-                        secret_findings = self.secret_detector.analyze_file(file_path, content)
-                        findings.extend(secret_findings)
-                    except Exception as e:
-                        print(f"Error analyzing {file_path}: {e}")
+                findings.extend(self.ast_analyzer.analyze_file(file_path, content))
+                findings.extend(self.secret_detector.analyze_file(file_path, content))
+            except Exception as e:
+                print(f"Error analyzing {file_path}: {e}")
 
         # Augment findings with AI explanations (only when AI explainer is enabled)
         for finding in findings:

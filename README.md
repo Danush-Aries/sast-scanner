@@ -42,7 +42,7 @@ Results are exported as [SARIF 2.1](https://docs.oasis-open.org/sarif/sarif/v2.1
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/dhanush-org/sast-scanner.git
+git clone https://github.com/Dhanush-Aries/sast-scanner.git
 cd sast-scanner
 
 # 2. Create and activate a virtual environment (recommended)
@@ -90,7 +90,7 @@ Scanning /path/to/project using rules from /home/user/sast-scanner/rules...
 ├─────────────────────┼──────────────────┼──────┼───────────────────────────────────────┼──────────┤
 │ command_injection   │ app/tasks.py     │  42  │ Potential Command Injection: dynamic… │ High     │
 │ sql_injection       │ app/models.py    │  87  │ Potential SQL Injection: dynamic …    │ Critical │
-│ secret_detected     │ config/dev.py    │   5  │ Potential Generic API Key detected    │ High     │
+│ high_entropy_secret │ config/dev.py    │   5  │ High entropy string (4.31) assigned … │ High     │
 └─────────────────────┴──────────────────┴──────┴───────────────────────────────────────┴──────────┘
 
 SARIF report saved to results.sarif
