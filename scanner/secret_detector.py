@@ -9,9 +9,10 @@ class SecretDetector:
     def __init__(self, entropy_threshold: float = 3.8, min_length: int = 8):
         self.entropy_threshold = entropy_threshold
         self.min_length = min_length
-        # Common patterns for secrets to reduce false positives or specifically target
+        # Specific, unambiguous key formats. Generic "key = value" assignments
+        # are handled by the entropy check below so low-entropy placeholders
+        # (e.g. API_KEY = "short_key") are not flagged.
         self.secret_patterns = {
-            "Generic API Key": r'(?i)(api_key|apikey|secret|token|passwd|password|auth_token)[\s:=]+["\']([a-zA-Z0-9_\-\.\~\/\+\=\+\/]{8,})["\']',
             "AWS Access Key": r'AKIA[0-9A-Z]{16}',
             "AWS Secret Access Key": r'(?i)aws_secret_access_key[\s:=]+["\']([a-zA-Z0-9\/+]{40})["\']',
             "Google API Key": r'AIza[0-9A-Za-z\-_]{35}',
