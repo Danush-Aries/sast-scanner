@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sentry-sast"
+version = "1.0.0"
+description = "SOC-grade static analysis for Python — Semgrep + AST + Shannon-entropy secret scanning, Claude-enriched findings"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["rich>=13.7","sarif-om>=1.0.4","anthropic>=0.28","semgrep>=1.80","fastapi>=0.110","uvicorn>=0.29","pydantic>=2.6","python-dotenv>=1.0"]
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+[project.scripts]
+sast-scanner = "scanner.cli:main"
+[tool.setuptools]
+packages = ["scanner"]
