@@ -2,8 +2,6 @@
 
 > **A SOC-grade static analysis tool for Python: Semgrep rules + AST traversal + Shannon-entropy secret scanning, with every finding enriched by a plain-English Claude explanation and a concrete remediation snippet. Ships as CLI, REST API, and a React dashboard. Exports SARIF 2.1 for GitHub Code Scanning.**
 
-<p align="center"><img src="assets/hero.gif" alt="SentrySAST — SAST + Claude in the loop" width="720"></p>
-
 <p align="center">
   <img src="https://img.shields.io/github/actions/workflow/status/Danush-Aries/sast-scanner/ci.yml?branch=main&style=flat-square" alt="build">
   <img src="https://img.shields.io/badge/license-MIT-00ff41?style=flat-square" alt="license">
@@ -39,12 +37,6 @@ Dashboard: `cd web/frontend && npm install && npm run dev` (proxies to :8003).
 - **SARIF 2.1 export (`scanner/sarif_exporter.py`)** — the industry-standard machine-readable format that plugs straight into GitHub Code Scanning, VS Code SARIF Viewer, and enterprise SIEMs.
 - **Adversarial bypass tests (`adversarial_tests.py`)** — a growing suite of obfuscation attempts (base64-encoded shell, string-concat SQL, secrets split across lines) used as a regression harness.
 - **Web dashboard** — React + TypeScript + Vite; severity charts (Recharts), per-finding drill-down, filter by rule ID.
-
-## Screenshots
-
-| CLI scan | SARIF report in GitHub | React dashboard |
-|---|---|---|
-| ![](assets/screenshot-1.png) | ![](assets/screenshot-2.png) | ![](assets/screenshot-3.png) |
 
 ## Detection categories
 
@@ -137,7 +129,7 @@ PRs welcome. New rules are just YAML in `rules/`; Semgrep picks them up on next 
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT).
+MIT — see [LICENSE](LICENSE).
 
 ---
 
